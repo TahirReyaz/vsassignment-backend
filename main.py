@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from typing import List, Dict, Any
 from fastapi.middleware.cors import CORSMiddleware
 
+from utils.graph import isDag
+
 app = FastAPI()
 
 app.add_middleware(
@@ -43,6 +45,7 @@ class PipelineData(BaseModel):
 
 @app.post('/pipelines/parse')
 async def parse_pipeline(data: PipelineData):
-    num_nodes = len(data.nodes)
-    num_edges = len(data.edges)
-    return {'num_nodes': num_nodes, 'num_edges': num_edges}
+    numNodes = len(data.nodes)
+    numEdges = len(data.edges)
+    dagCheck = isDag(data.nodes, data.edges)
+    return {'num_nodes': numNodes, 'num_edges': numEdges, 'is_dag':  dagCheck }
